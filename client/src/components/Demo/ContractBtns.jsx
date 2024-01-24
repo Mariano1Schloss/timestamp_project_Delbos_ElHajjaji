@@ -1,7 +1,9 @@
 import { useState } from "react";
 import useEth from "../../contexts/EthContext/useEth";
+import Web3 from "web3";
 
-function ContractBtns({ setValue }) {
+
+function ContractBtns({ setValue,value }) {
   const { state: { contract, accounts } } = useEth();
   const [inputValue, setInputValue] = useState("");
 
@@ -12,8 +14,11 @@ function ContractBtns({ setValue }) {
   };
 
   const read = async () => {
-    const value = await contract.methods.read().call({ from: accounts[0] });
-    setValue(value);
+    //const value = await contract.methods.read().call({ from: accounts[0] });
+    //setValue(value);
+    console.log(value);
+    const image_details = await contract.methods.getImageDetails(Web3.utils.utf8ToHex(value)).call({ from: accounts[0] });
+    console.log(image_details );
   };
 
   const write = async e => {
@@ -25,7 +30,10 @@ function ContractBtns({ setValue }) {
       return;
     }
     const newValue = parseInt(inputValue);
-    await contract.methods.write(newValue).send({ from: accounts[0] });
+    console.log(accounts[0]);
+    //await contract.methods.write(newValue).send({ from: accounts[0] });
+    await contract.methods.addImage(Web3.utils.utf8ToHex(newValue)).send({ from: accounts[0] });
+    //setValue(newValue);
   };
 
   return (

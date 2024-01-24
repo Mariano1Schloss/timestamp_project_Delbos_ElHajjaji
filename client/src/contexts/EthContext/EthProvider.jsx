@@ -16,6 +16,8 @@ function EthProvider({ children }) {
         let address, contract;
         try {
           address = artifact.networks[networkID].address;
+          console.log(address);
+          console.log(abi);
           contract = new web3.eth.Contract(abi, address);
         } catch (err) {
           console.error(err);
@@ -30,7 +32,7 @@ function EthProvider({ children }) {
   useEffect(() => {
     const tryInit = async () => {
       try {
-        const artifact = require("../../contracts/SimpleStorage.json");
+        const artifact = require("../../contracts/ImageStorage.json");
         init(artifact);
       } catch (err) {
         console.error(err);
