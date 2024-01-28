@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity >=0.4.22 <0.9.0;
 
 contract ImageStorage {
     // Structure to represent an image
@@ -13,7 +13,7 @@ contract ImageStorage {
     mapping(bytes32 => Image) public images;
 
     // Event emitted when a new image is added
-    //event ImageAdded(address indexed owner, bytes32 indexed imageHash, uint256 timestamp);
+    event ImageAdded(address indexed owner, bytes32 indexed imageHash, uint256 timestamp);
 
     // Modifier to ensure that only the owner can perform certain actions
     /*modifier onlyOwner(bytes32 imageHash) {
@@ -22,38 +22,31 @@ contract ImageStorage {
     }*/
 
     // Function to add a new image to the blockchain
-    function addImage(bytes32 _imageHash) external {
-        //require(images[_imageHash].owner == address(0), "Image already exists");
+    function addImage(uint256 intValue) external {
+    bytes32 _imageHash = bytes32(intValue);
 
-        // Record the image details
-        images[_imageHash] = Image({
-            owner: msg.sender,
-            imageHash: _imageHash,
-            timestamp: block.timestamp
-        });
+    // Check if an image already exists for the given hash
+    require(images[_imageHash].owner == address(0), "Image already exists");
 
-        // Emit an event
-        //emit ImageAdded(msg.sender, _imageHash, block.timestamp);
-    }
+    // Record the image details
+    images[_imageHash] = Image({
+        owner: msg.sender,
+        imageHash: _imageHash,
+        timestamp: block.timestamp
+    });
+
+    // Emit an event
+    emit ImageAdded(msg.sender, _imageHash, block.timestamp);
+}
 
     // Function to get image details
-    function getImageDetails(bytes32 imageHash) external view returns (address owner, uint256 timestamp) {
-        return (images[imageHash].owner, images[imageHash].timestamp);
+    function getImageDetails(uint256 intValue) external view returns (address owner, uint256 timestamp) {
+        bytes32 imageHash = bytes32(intValue);
+        Image storage image = images[imageHash];
+        //require(image.owner != address(0), "Image  does not exist for the given hash");
+        return (image.owner, image.timestamp);
     }
 
-    // Function to get all images
-    function getAllImages() external view returns (Image[] memory) {
-        // Create a dynamic array to store images
-        Image[] memory allImages = new Image[](images.length);
-
-        // Iterate through the array of image hashes and fetch details
-        for (uint256 i = 0; i < images.length; i++) {
-            bytes32 imageHash = images[i];
-            allImages[i] = images[imageHash];
-        }
-
-        return allImages;
-    }
 
 
     // Additional functions can be added for features like transferring ownership, revoking access, etc.

@@ -16,10 +16,8 @@ function Demo() {
     <>
       <Cta />
       <div className="contract-container">
-        <Contract value={value} />
         <ContractBtns setValue={setValue} value={value} />
       </div>
-      <Desc />
     </>;
 
   return (

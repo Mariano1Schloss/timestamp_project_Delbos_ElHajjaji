@@ -1,10 +1,7 @@
 function Cta() {
   return (
     <p>
-      Try changing&nbsp;
-      <span className="code">value</span>
-      &nbsp;in&nbsp;
-      <span className="code">SimpleStorage</span>.
+      Ajouter/lire des photos par leur hash
     </p>
   );
 }

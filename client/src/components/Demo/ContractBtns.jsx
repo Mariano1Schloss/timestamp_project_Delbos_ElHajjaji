@@ -6,6 +6,8 @@ import Web3 from "web3";
 function ContractBtns({ setValue,value }) {
   const { state: { contract, accounts } } = useEth();
   const [inputValue, setInputValue] = useState("");
+  const [imageDetails, setImageDetails] = useState(null);
+
 
   const handleInputChange = e => {
     if (/^\d+$|^$/.test(e.target.value)) {
@@ -13,12 +15,25 @@ function ContractBtns({ setValue,value }) {
     }
   };
 
-  const read = async () => {
-    //const value = await contract.methods.read().call({ from: accounts[0] });
-    //setValue(value);
-    console.log(value);
-    const image_details = await contract.methods.getImageDetails(Web3.utils.utf8ToHex(value)).call({ from: accounts[0] });
-    console.log(image_details );
+  const read = async e => {
+    if (e.target.tagName === "INPUT") {
+      return;
+    }
+    if (inputValue === "") {
+      alert("Please enter a value to write.");
+      return;
+    }
+    const imageHash = parseInt(inputValue);
+    console.log("Input value:", imageHash);
+
+    try {
+      const imageDetailsResponse = await contract.methods.getImageDetails(imageHash).call({ from: accounts[0] });
+      console.log("Image Details:", imageDetailsResponse);
+      setImageDetails(imageDetailsResponse);
+    } catch (error) {
+      console.error("Error fetching image details:", error.message);
+      setImageDetails(null);
+    }
   };
 
   const write = async e => {
@@ -29,30 +44,56 @@ function ContractBtns({ setValue,value }) {
       alert("Please enter a value to write.");
       return;
     }
-    const newValue = parseInt(inputValue);
-    console.log(accounts[0]);
-    //await contract.methods.write(newValue).send({ from: accounts[0] });
-    await contract.methods.addImage(Web3.utils.utf8ToHex(newValue)).send({ from: accounts[0] });
-    //setValue(newValue);
+    const imageHash = parseInt(inputValue);
+    console.log("Input value:", imageHash);
+    console.log("Address:", accounts[0]);
+
+    try {
+      const receipt = await contract.methods.addImage(imageHash).send({ from: accounts[0] });
+      console.log("Transaction Receipt:", receipt);
+      setValue(inputValue);
+      console.log("New value:", value);
+    } catch (error) {
+      console.error("Error adding image:", error.message);
+    }
+
   };
 
   return (
+    <div>
     <div className="btns">
-
-      <button onClick={read}>
-        read()
+      <button onClick={read} className="input-btn">
+        getImage (
+        <input
+          type="text"
+          placeholder="uint"
+          value={inputValue}
+          onChange={handleInputChange}
+        />)
       </button>
 
       <div onClick={write} className="input-btn">
-        write(<input
+        write (
+        <input
           type="text"
           placeholder="uint"
           value={inputValue}
           onChange={handleInputChange}
         />)
       </div>
-
     </div>
+
+    {imageDetails && (
+      <div className="image-details">
+        <p>
+          <strong>Owner:</strong> {imageDetails.owner}
+        </p>
+        <p>
+          <strong>Timestamp:</strong> {imageDetails.timestamp}
+        </p>
+      </div>
+    )}
+  </div>
   );
 }
 

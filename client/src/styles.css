@@ -115,7 +115,6 @@ hr {
   align-items: center;
   justify-content: space-evenly;
   padding: 0 1rem;
-  background-color: var(--gray);
   border-radius: 0 1rem 1rem 0;
 }
 
