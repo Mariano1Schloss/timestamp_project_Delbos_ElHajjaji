@@ -1,6 +1,6 @@
 import { EthProvider } from "./contexts/EthContext";
 import Demo from "./components/Demo";
-
+import Ipfs from "./ipfs/ipfs.js"
 function App() {
   return (
     <EthProvider>
@@ -8,6 +8,9 @@ function App() {
         <div className="container">
           <hr />
           <Demo />
+          <hr />
+          <hr />
+          <Ipfs />
           <hr />
         </div>
       </div>
